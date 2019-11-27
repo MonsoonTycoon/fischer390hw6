@@ -125,13 +125,16 @@ public:
     bool contain(KeyType const &key) override {
         int hashedKey = hashFunc( key );
         if (entries[hashedKey]==nullptr) return false;
-        else{
+        else {
             Entry<KeyType, ValueType> *ptr = entries[hashedKey];
-            if (ptr->getKey() == key){
-                return true;
+            while (ptr) {
+                if (ptr->getKey() == key) {
+                    return true;
+                }
+                ptr = ptr->next;
             }
+            return false;
         }
-        return false;
     }
 
     void traverse() override {
@@ -139,14 +142,17 @@ public:
     }
 
     bool remove(KeyType const &key) override {
-        int hashedKey = hashFunc( key );
-        if (entries[hashedKey]==nullptr) return false;
-        else{
+        int hashedKey = hashFunc(key);
+        if (entries[hashedKey] == nullptr) return false;
+        else {
             Entry<KeyType, ValueType> *ptr = entries[hashedKey];
-            if (ptr->getKey() == key){
-                return true;
+            while (ptr) {
+                if (ptr->getKey() == key) {
+                    return true;
+                }
+                ptr = ptr->next;
             }
+            return false;
         }
-        return false;
     }
 };
