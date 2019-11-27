@@ -71,11 +71,24 @@ TEST(dict, array_dict_add_get) {
 }
 
 TEST(dict, contains) {
-    // homework
-    ASSERT_TRUE(false); // placeholder
+    ArrayDictionary<int, int> hashTable;
+
+    hashTable.add(2, 9);
+    hashTable.add(3, 4);
+    hashTable.add(12, 8);
+    ASSERT_TRUE(hashTable.contain(2));
+    ASSERT_TRUE(hashTable.contain(3));
+    ASSERT_TRUE(hashTable.contain(12));
 }
 
 TEST(dict, remove) {
-    // homework
-    ASSERT_TRUE(false); // placeholder
+    ArrayDictionary<int, int> hashTable;
+
+    hashTable.add(2, 9);
+    hashTable.add(3, 4);
+    hashTable.add(12, 8);
+    ASSERT_TRUE(hashTable.remove(2));
+    ASSERT_TRUE(hashTable.remove(3));
+    ASSERT_TRUE(hashTable.remove(12));
+
 }
