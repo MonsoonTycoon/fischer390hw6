@@ -143,16 +143,28 @@ public:
 
     bool remove(KeyType const &key) override {
         int hashedKey = hashFunc(key);
+        //empty entry
         if (entries[hashedKey] == nullptr) return false;
+        //first entry
+        if (entries [hashedKey]->getKey() == key){
+            Entry<KeyType, ValueType> *firstEntry = entries[hashedKey];
+            entries[hashedKey] = firstEntry->next;
+            delete firstEntry;
+            return true;
+        }
+        //somewhere else
         else {
             Entry<KeyType, ValueType> *ptr = entries[hashedKey];
-            while (ptr) {
-                if (ptr->getKey() == key) {
+            while (ptr -> next != nullptr) {
+                if (ptr->next->getKey()==key) {
+                    Entry<KeyType, ValueType> *toRemove = ptr->next;
+                    ptr->next=ptr->next->next;
+                    delete toRemove;
                     return true;
                 }
                 ptr = ptr->next;
             }
-            return false;
         }
+        return false;
     }
 };
