@@ -151,3 +151,4 @@ TEST(sudoku, case5) {
 
     sudoku.solve();
     ASSERT_TRUE(sudoku==answer);
+}
