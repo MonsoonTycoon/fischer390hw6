@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstring>
-
+//design taken from
+//https://www.geeksforgeeks.org/sudoku-backtracking-7/
 class Sudoku {
 private:
     int grid[9][9]{};
@@ -12,7 +13,7 @@ public:
 
     bool operator ==(const int (*otherGrid)[9]) {
         for (int i=0; i<9*9; i++) {
-            if (grid[i%3][i/3] != otherGrid[i%3][i/3]) {
+            if (grid[i%9][i/9] != otherGrid[i%9][i/9]) {
                 return false;
             }
         }
@@ -21,7 +22,10 @@ public:
 
     bool operator ==(const Sudoku & other) {
         for (int i=0; i<9*9; i++) {
-            if (grid[i%3][i/3] != other.grid[i%3][i/3]) {
+#ifdef PRINT
+            printf("comparing grid(%d, %d)\n", i%9, i/9);
+#endif
+            if (grid[i%9][i/9] != other.grid[i%9][i/9]) {
                 return false;
             }
         }
@@ -55,82 +59,54 @@ public:
     }
 
     bool solve() {
-        return SolveSudoku( grid );
+        return backtrackSolution( grid );
     }
-
-    bool unsolved(int grid[9][9],
-                                int &row, int &col) {
+//if grid is full
+    bool isUnsolved(int grid[9][9], int &row, int &col) {
         for (row = 0; row < 9; row++)
             for (col = 0; col < 9; col++)
-                if (grid[row][col] == 0)
-                    return true;
+                if (grid[row][col] == 0) return true;
         return false;
     }
-
-    bool isSafe(int grid[9][9], int row,
-                int col, int num) {
-        return !UsedInRow(grid, row, num) &&
-               !UsedInCol(grid, col, num) &&
-               !UsedInBox(grid, row - row % 3 ,
+//checks row, col and 3x3 box for duplicate number
+    bool isSafe(int grid[9][9], int row, int col, int num) {
+        return !checkRow(grid, row, num) &&
+               !checkCol(grid, col, num) &&
+               !checkBox(grid, row - row % 3 ,
                           col - col % 3, num) &&
                grid[row][col] == 0;
     }
-    
-    bool SolveSudoku(int grid[9][9]) {
+//number/location current being worked on
+    bool backtrackSolution(int grid[9][9]) {
         int row, col;
-        // If there is no unassigned location,
-        // we are done
-        if (!unsolved(grid, row, col))
-            return true; // success!
-        // consider digits 1 to 9
-        for (int num = 1; num <= 9; num++)
-        {
-            // if looks promising
-            if (isSafe(grid, row, col, num))
-            {
-                // make tentative assignment
+        if (!isUnsolved(grid, row, col)) return true;
+        for (int num = 1; num <= 9; num++) {
+            if (isSafe(grid, row, col, num)) {
                 grid[row][col] = num;
-                // return, if success, yay!
-                if (SolveSudoku(grid))
+                if (backtrackSolution(grid))
                     return true;
-                // failure, unmake & try again
                 grid[row][col] = 0;
             }
         }
-        return false; // this triggers backtracking
+        return false;
     }
-
-/* Returns a boolean which indicates whether
-an assigned entry in the specified row matches
-the given number. */
-    bool UsedInRow(int grid[9][9], int row, int num) {
+//checks row for duplicates
+    bool checkRow(int grid[9][9], int row, int num) {
         for (int col = 0; col < 9; col++)
-            if (grid[row][col] == num)
-                return true;
+            if (grid[row][col] == num) return true;
         return false;
     }
-
-/* Returns a boolean which indicates whether
-an assigned entry in the specified column
-matches the given number. */
-    bool UsedInCol(int grid[9][9], int col, int num) {
+//checks column for duplicates
+    bool checkCol(int grid[9][9], int col, int num) {
         for (int row = 0; row < 9; row++)
-            if (grid[row][col] == num)
-                return true;
+            if (grid[row][col] == num) return true;
         return false;
     }
-
-/* Returns a boolean which indicates whether
-an assigned entry within the specified 3x3 box
-matches the given number. */
-    bool UsedInBox(int grid[9][9], int boxStartRow,
-                   int boxStartCol, int num) {
+//checks 3x3 for duplicates
+    bool checkBox(int grid[9][9], int boxStartRow, int boxStartCol, int num) {
         for (int row = 0; row < 3; row++)
             for (int col = 0; col < 3; col++)
-                if (grid[row + boxStartRow]
-                    [col + boxStartCol] == num)
-                    return true;
+                if (grid[row + boxStartRow] [col + boxStartCol] == num) return true;
         return false;
     }
-
 };
